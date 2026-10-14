@@ -1,12 +1,8 @@
 import { Router } from "express";
+import instrumentRoutes from "./modules/instruments/instruments.routes";
 
 const routes = Router();
 
-routes.get("/health", (_req, res) => {
-  return res.status(200).json({
-    status: "ok",
-    message: "Sistema de Jam API está funcionando.",
-  });
-});
+routes.use("/instruments", instrumentRoutes);
 
 export default routes;

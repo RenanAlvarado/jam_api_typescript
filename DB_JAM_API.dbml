@@ -1,0 +1,6 @@
+Table instruments {
+  id int [pk, increment]
+  name varchar(255) [not null, unique]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
