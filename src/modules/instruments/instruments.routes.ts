@@ -10,6 +10,7 @@ import { searchInstrumentSchema } from "./dto/search-instrument.dto";
 
 const instrumentRoutes = Router();
 
+// #region POST /instruments
 /**
  * @openapi
  * /instruments:
@@ -21,18 +22,11 @@ const instrumentRoutes = Router();
  *     operationId: createInstrument
  *     requestBody:
  *       required: true
+ *       description: Dados necessários para cadastrar o instrumento.
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *                 maxLength: 50
- *                 description: Nome do instrumento musical.
- *                 example: Guitarra
+ *             $ref: '#/components/schemas/CreateInstrument'
  *           example:
  *             name: Guitarra
  *     responses:
@@ -49,6 +43,8 @@ const instrumentRoutes = Router();
  *         description: Dados da requisição inválidos.
  *         content:
  *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *             example:
  *               status: error
  *               message: O nome do instrumento é obrigatório.
@@ -56,6 +52,8 @@ const instrumentRoutes = Router();
  *         description: Já existe um instrumento com esse nome.
  *         content:
  *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *             example:
  *               status: error
  *               message: Este instrumento já está cadastrado.
@@ -65,7 +63,9 @@ instrumentRoutes.post(
   validateSchema(createInstrumentSchema),
   instrumentController.store.bind(instrumentController),
 );
+// #endregion
 
+// #region GET /instruments
 /**
  * @openapi
  * /instruments:
@@ -78,7 +78,7 @@ instrumentRoutes.post(
  *     parameters:
  *       - in: query
  *         name: page
- *         description: Número da página.
+ *         description: Número da página a ser consultada.
  *         schema:
  *           type: integer
  *           minimum: 1
@@ -95,7 +95,7 @@ instrumentRoutes.post(
  *         example: 10
  *       - in: query
  *         name: order
- *         description: Ordenação pelo nome do instrumento.
+ *         description: Ordenação dos instrumentos pelo nome.
  *         schema:
  *           type: string
  *           enum: [ASC, DESC]
@@ -114,25 +114,7 @@ instrumentRoutes.post(
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               required:
- *                 - status
- *                 - message
- *                 - data
- *                 - pagination
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 message:
- *                   type: string
- *                   example: Instrumentos listados com sucesso.
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/InstrumentResponse'
- *                 pagination:
- *                   $ref: '#/components/schemas/Pagination'
+ *               $ref: '#/components/schemas/InstrumentListResponse'
  *             example:
  *               status: success
  *               message: Instrumentos listados com sucesso.
@@ -148,13 +130,22 @@ instrumentRoutes.post(
  *                 totalPages: 1
  *       '400':
  *         description: Parâmetros de consulta inválidos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Parâmetros de consulta inválidos.
  */
 instrumentRoutes.get(
   "/",
   validateQuery(searchInstrumentSchema),
   instrumentController.index.bind(instrumentController),
 );
+// #endregion
 
+// #region GET /instruments/:id
 /**
  * @openapi
  * /instruments/{id}:
@@ -168,7 +159,7 @@ instrumentRoutes.get(
  *       - in: path
  *         name: id
  *         required: true
- *         description: Identificador do instrumento.
+ *         description: Identificador único do instrumento.
  *         schema:
  *           type: integer
  *           minimum: 1
@@ -185,14 +176,30 @@ instrumentRoutes.get(
  *               name: Guitarra
  *       '400':
  *         description: Identificador inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Identificador inválido.
  *       '404':
  *         description: Instrumento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Instrumento não encontrado.
  */
 instrumentRoutes.get(
   "/:id",
   instrumentController.show.bind(instrumentController),
 );
+// #endregion
 
+// #region PUT /instruments/:id
 /**
  * @openapi
  * /instruments/{id}:
@@ -206,13 +213,14 @@ instrumentRoutes.get(
  *       - in: path
  *         name: id
  *         required: true
- *         description: Identificador do instrumento.
+ *         description: Identificador único do instrumento.
  *         schema:
  *           type: integer
  *           minimum: 1
  *         example: 1
  *     requestBody:
  *       required: true
+ *       description: Dados para atualizar o instrumento.
  *       content:
  *         application/json:
  *           schema:
@@ -230,18 +238,41 @@ instrumentRoutes.get(
  *               id: 1
  *               name: Violão
  *       '400':
- *         description: Identificador ou dados inválidos.
+ *         description: Identificador ou dados da requisição inválidos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Dados da requisição inválidos.
  *       '404':
  *         description: Instrumento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Instrumento não encontrado.
  *       '409':
- *         description: Já existe um instrumento com esse nome.
+ *         description: Já existe outro instrumento com esse nome.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Este instrumento já está cadastrado.
  */
 instrumentRoutes.put(
   "/:id",
   validateSchema(updateInstrumentSchema),
   instrumentController.update.bind(instrumentController),
 );
+// #endregion
 
+// #region DELETE /instruments/:id
 /**
  * @openapi
  * /instruments/{id}:
@@ -255,7 +286,7 @@ instrumentRoutes.put(
  *       - in: path
  *         name: id
  *         required: true
- *         description: Identificador do instrumento.
+ *         description: Identificador único do instrumento.
  *         schema:
  *           type: integer
  *           minimum: 1
@@ -265,12 +296,27 @@ instrumentRoutes.put(
  *         description: Instrumento excluído com sucesso. A resposta não possui corpo.
  *       '400':
  *         description: Identificador inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Identificador inválido.
  *       '404':
  *         description: Instrumento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             example:
+ *               status: error
+ *               message: Instrumento não encontrado.
  */
 instrumentRoutes.delete(
   "/:id",
   instrumentController.delete.bind(instrumentController),
 );
+// #endregion
 
 export default instrumentRoutes;
