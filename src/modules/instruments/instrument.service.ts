@@ -61,7 +61,7 @@ class InstrumentService {
 
   // Buscar instrumento por ID
   async show(id: number): Promise<InstrumentResponseDTO> {
-    const instrument = await this.findById(id);
+    const instrument = await this.findEntityById(id);
 
     return this.toResponseDTO(instrument);
   }
@@ -71,7 +71,7 @@ class InstrumentService {
     id: number,
     updateInstrumentDTO: UpdateInstrumentDTO,
   ): Promise<InstrumentResponseDTO> {
-    const instrument = await this.findById(id);
+    const instrument = await this.findEntityById(id);
     const { name } = updateInstrumentDTO;
 
     await this.ensureNameAvailable(name, id);
@@ -85,7 +85,7 @@ class InstrumentService {
 
   // Excluir instrumento
   async delete(id: number): Promise<void> {
-    const instrument = await this.findById(id);
+    const instrument = await this.findEntityById(id);
 
     await this.instrumentRepository.remove(instrument);
   }
@@ -99,7 +99,7 @@ class InstrumentService {
   }
 
   // Buscar instrumento por ID (Sem padrão de resposta)
-  private async findById(id: number): Promise<Instrument> {
+  private async findEntityById(id: number): Promise<Instrument> {
     const instrument = await this.instrumentRepository.findOneBy({ id });
 
     if (!instrument) {

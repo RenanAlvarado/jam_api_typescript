@@ -142,6 +142,72 @@ export const swaggerDefinition = {
         required: ["status", "message", "data", "pagination"],
       },
 
+      CreateAddress: {
+        type: "object",
+        required: ["place_name", "number", "zip_code"],
+        properties: {
+          place_name: {
+            type: "string",
+            maxLength: 255,
+            example: "Escritório Principal",
+          },
+          number: {
+            type: "string",
+            example: "323",
+          },
+          zip_code: {
+            type: "string",
+            pattern: "^\\d{8}$",
+            description:
+              "CEP com oito dígitos. A entrada aceita hífen, que é removido pela validação.",
+            example: "58400-550",
+          },
+          complement: {
+            type: "string",
+            nullable: true,
+            maxLength: 255,
+            example: "Sala 1234",
+          },
+        },
+      },
+
+      AddressResponse: {
+        type: "object",
+        required: [
+          "id",
+          "place_name",
+          "street",
+          "number",
+          "district",
+          "city",
+          "state",
+          "zip_code",
+          "complement",
+          "maps_url",
+        ],
+        properties: {
+          id: { type: "integer", example: 1 },
+          place_name: { type: "string", example: "Escritório Principal" },
+          street: { type: "string", example: "Rua Rodrigues Alves" },
+          number: { type: "string", example: "323" },
+          district: { type: "string", example: "Prata" },
+          city: { type: "string", example: "Campina Grande" },
+          state: { type: "string", example: "PB" },
+          zip_code: { type: "string", example: "58400550" },
+          complement: {
+            type: "string",
+            nullable: true,
+            example: "Sala 1234",
+          },
+          maps_url: {
+            type: "string",
+            format: "uri",
+            example:
+              "https://www.google.com/maps/search/?api=1&query=Rua%20Rodrigues%20Alves%2C%20323%2C%20Prata%2C%20Campina%20Grande%2C%20PB",
+          },
+        },
+      },
+
       // Endereço retornado pela consulta ao ViaCEP
       ViaCepResponse: {
         type: "object",

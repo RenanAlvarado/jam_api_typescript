@@ -4,3 +4,18 @@ Table instruments {
   created_at datetime [not null]
   updated_at datetime [not null]
 }
+
+Table addresses {
+  id int [pk, increment]
+  place_name varchar(255) [not null]
+  street varchar(255) [not null]
+  number varchar(255) [not null]
+  district varchar(255) [not null]
+  city varchar(255) [not null]
+  state varchar(2) [not null]
+  zip_code varchar(8) [not null]
+  complement varchar(255)
+  maps_url text [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
