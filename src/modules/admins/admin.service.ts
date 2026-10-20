@@ -4,7 +4,7 @@ import database from "../../config/database.config";
 import AppError from "../../errors/AppError";
 import Admin from "./admin.entity";
 import type { AdminResponseDTO } from "./dto/admin-response.dto";
-import type { RegisterAdminDTO } from "./dto/register-admin.dto";
+import type { RegisterAdminDTO } from "../auth/dto/register-admin.dto";
 import type { UpdateAdminDTO } from "./dto/update-admin.dto";
 
 class AdminService {
@@ -18,7 +18,7 @@ class AdminService {
     const { name, email, password } = registerAdminDTO;
 
     // Verificar se o e-mail já está cadastrado
-    await this.findByEmail(email);
+    await this.validateByEmail(email);
 
     // Gerar hash da senha
     const passwordHash = await this.hashPassword(password);
@@ -42,15 +42,6 @@ class AdminService {
     const admin = await this.findEntityById(id);
 
     return this.toResponseDTO(admin);
-  }
-
-  //   Busca por email, se encontrar retorna erro
-  async findByEmail(email: string): Promise<void> {
-    const admin = await this.adminRepository.findOneBy({ email });
-
-    if (admin) {
-      throw new AppError("Este e-mail já está cadastrado.", 409);
-    }
   }
 
   // Atualizar administrador
@@ -96,6 +87,15 @@ class AdminService {
     };
   }
 
+  //   Busca por email, se encontrar retorna erro
+  async validateByEmail(email: string): Promise<void> {
+    const admin = await this.adminRepository.findOneBy({ email });
+
+    if (admin) {
+      throw new AppError("Este e-mail já está cadastrado.", 409);
+    }
+  }
+
   // Buscar entidade de administrador por ID
   private async findEntityById(id: number): Promise<Admin> {
     const admin = await this.adminRepository.findOneBy({ id });
@@ -105,6 +105,11 @@ class AdminService {
     }
 
     return admin;
+  }
+
+  // Buscar entidade de administrador por e-mail
+  async findEntityByEmail(email: string): Promise<Admin | null> {
+    return this.adminRepository.findOneBy({ email });
   }
 
   //   Criar Hash de senha

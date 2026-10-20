@@ -27,6 +27,10 @@ export const swaggerDefinition = {
 
   tags: [
     {
+      name: "Auth",
+      description: "Autenticação e gerenciamento de acesso por token JWT.",
+    },
+    {
       name: "Instruments",
       description:
         "Cadastro, consulta, atualização e exclusão de instrumentos musicais.",
@@ -38,7 +42,118 @@ export const swaggerDefinition = {
   ],
 
   components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Informe o token JWT obtido no login.",
+      },
+    },
+
     schemas: {
+      // Dados para cadastrar um administrador
+      RegisterAdmin: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            maxLength: 100,
+            description: "Nome do administrador.",
+            example: "Administrador",
+          },
+          email: {
+            type: "string",
+            format: "email",
+            maxLength: 150,
+            description: "E-mail do administrador.",
+            example: "admin@exemplo.com",
+          },
+          password: {
+            type: "string",
+            description:
+              "Senha que atende aos critérios de segurança definidos pela API.",
+            example: "SenhaSegura123!",
+          },
+        },
+        required: ["name", "email", "password"],
+        additionalProperties: false,
+      },
+
+      // Credenciais para autenticação
+      Login: {
+        type: "object",
+        properties: {
+          email: {
+            type: "string",
+            format: "email",
+            maxLength: 150,
+            description: "E-mail cadastrado do administrador.",
+            example: "admin@exemplo.com",
+          },
+          password: {
+            type: "string",
+            maxLength: 128,
+            description: "Senha do administrador.",
+            example: "SenhaSegura123!",
+          },
+        },
+        required: ["email", "password"],
+        additionalProperties: false,
+      },
+
+      // Resposta de autenticação com token JWT
+      AuthTokenResponse: {
+        type: "object",
+        properties: {
+          access_token: {
+            type: "string",
+            description: "Token JWT para autenticação.",
+            example: "eyJhbGciOiJIUzI1NiIs...",
+          },
+          token_type: {
+            type: "string",
+            enum: ["Bearer"],
+            example: "Bearer",
+          },
+        },
+        required: ["access_token", "token_type"],
+      },
+
+      // Administrador retornado pela API, sem informações sensíveis
+      AdminResponse: {
+        type: "object",
+        properties: {
+          id: {
+            type: "integer",
+            description: "Identificador único do administrador.",
+            example: 1,
+          },
+          name: {
+            type: "string",
+            maxLength: 100,
+            example: "Administrador",
+          },
+          email: {
+            type: "string",
+            format: "email",
+            maxLength: 150,
+            example: "admin@exemplo.com",
+          },
+          created_at: {
+            type: "string",
+            format: "date-time",
+            example: "2026-10-20T12:00:00.000Z",
+          },
+          updated_at: {
+            type: "string",
+            format: "date-time",
+            example: "2026-10-20T12:00:00.000Z",
+          },
+        },
+        required: ["id", "name", "email", "created_at", "updated_at"],
+      },
+
       // Instrumento retornado pela API
       InstrumentResponse: {
         type: "object",
