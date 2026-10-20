@@ -19,3 +19,13 @@ Table addresses {
   created_at datetime [not null]
   updated_at datetime [not null]
 }
+
+
+Table admins {
+  id int [pk, increment]
+  name varchar(100) [not null]
+  email varchar(150) [not null, unique]
+  password_hash varchar(255) [not null]
+  created_at datetime [not null]
+  updated_at datetime [not null]
+}
