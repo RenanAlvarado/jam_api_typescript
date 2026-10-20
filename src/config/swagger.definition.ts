@@ -31,6 +31,11 @@ export const swaggerDefinition = {
       description: "Autenticação e gerenciamento de acesso por token JWT.",
     },
     {
+      name: "Admins",
+      description:
+        "Gerenciamento da própria conta do administrador autenticado.",
+    },
+    {
       name: "Instruments",
       description:
         "Cadastro, consulta, atualização e exclusão de instrumentos musicais.",
@@ -77,6 +82,27 @@ export const swaggerDefinition = {
           },
         },
         required: ["name", "email", "password"],
+        additionalProperties: false,
+      },
+
+      // Atualizar um Administrador
+      UpdateAdmin: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            maxLength: 100,
+            description: "Novo nome do administrador.",
+            example: "Joao Silva",
+          },
+          password: {
+            type: "string",
+            description:
+              "Nova senha do administrador, conforme as regras de validação da API.",
+            example: "NovaSenha123!",
+          },
+        },
+        minProperties: 1,
         additionalProperties: false,
       },
 
